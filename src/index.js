@@ -2,68 +2,70 @@
 
 const url = 'http://localhost:3000'
 
-//******************First Deliverable******************/
+
+// //******************First Deliverable******************/
 
 fetch(`${url}/images/1`)
     .then(response => response.json())
-    .then(data => {
-        const detailH2 = document.querySelector('h2.title')
-        detailH2.textContent = data.title
+    .then(json => renderImageCard(json))
+   
+    function renderImageCard(data) {
 
-        const img = document.querySelector('img.image')
-        img.src = data.image
+      const imageTitle = document.querySelector('h2.title')
+      imageTitle.textContent = data.title
 
-    
+      const img = document.querySelector('img.image')
+      img.src = data.image
 
-        const commentsUl = document.querySelector('ul.comments')
-
-    data.comments.forEach(commentObject => {
-        const li = document.querySelector('li')
-        li.textContent = commentObject.content
-        commentsUl.append(li)
-    })
-})
-
-
-//******************Second Deliverable******************/
-
-const likesDiv = document.querySelector('button.like-button')
-
-likesDiv.addEventListener('click', event => {
-    if(event.target.matches('button.like-button')) {
-        
-       
-        const likeSpan =event.target.previousElementSibling
-        const likes = parseInt(likeSpan.innerText) + 1
-        likeSpan.innerText = `${likes} Likes`
-        
-        fetch(`${url}/images/1`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ likes })   
-    })
-        .then(response => response.json())
-        .then(data => {
-            likeSpan.innerText = `${data.likes} Likes`
-    })
-    }   
-})
-
-
-////was not able to have the likes stay on the page after refresh. not sure how to do that 
-
-//******************Third Deliverable******************/
-
-///ran out of time to finish the third deliverable :(
-
-const commentForm = document.querySelector('input.comment-input')
-
-commentForm.addEventListener('submit', event => {
-    if(event.target.matches('imput.comment-input')){
-
+      const commentsUl = document.querySelector('ul.comments')
+        data.comments.forEach(commentObject => {
+            const li = document.querySelector('li')
+            li.textContent = commentObject.content
+            commentsUl.append(li)
+        })
+    renderImageCard
     }
 
+
+// //******************Second Deliverable******************/
+
+const likesButton = document.querySelector('button.like-button')
+    
+likesButton.addEventListener('click', e => { e
+        const likeSpan = document.querySelector('span.likes')
+        const newLikes = parseInt(likeSpan.textContent) + 1
+   
+    fetch(`${url}/images/1`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ likes: newLikes})
+    })
+        .then(response => response.json())
+        .then(updatedLikesObject => {
+            likeSpan.textContent = `${updatedLikesObject.likes} Likes`
+        })
+})
+
+//likes still were not persisting in the web browser.
+// spent some time reviewing videos, searching the web, and talked with Liz,
+// but still couldn't figure out why they disapear on web refresh.
+
+// //******************Third Deliverable******************/
+
+const commentForm = document.querySelector('form.comment-form')
+
+commentForm.addEventListener('submit', e => {
+    e.preventDefault()
+    
+    const newCommentInput = e.target.comment.value
+
+    const li = document.createElement('li')
+    li.textContent = newCommentInput
+
+    const commentsUl = document.querySelector('ul.comments')
+    commentsUl.append(li)
+
+    e.target.reset()
 })
