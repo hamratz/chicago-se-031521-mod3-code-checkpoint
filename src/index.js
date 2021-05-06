@@ -7,22 +7,26 @@ const url = 'http://localhost:3000'
 
 fetch(`${url}/images/1`)
     .then(response => response.json())
-    .then(json => renderImageCard(json))
+    .then(data => renderImageCard(data))
    
     function renderImageCard(data) {
 
-      const imageTitle = document.querySelector('h2.title')
-      imageTitle.textContent = data.title
+        const imageTitle = document.querySelector('h2.title')
+        imageTitle.textContent = data.title
 
-      const img = document.querySelector('img.image')
-      img.src = data.image
+        const img = document.querySelector('img.image')
+        img.src = data.image
 
-      const commentsUl = document.querySelector('ul.comments')
+        const commentsUl = document.querySelector('ul.comments')
         data.comments.forEach(commentObject => {
             const li = document.querySelector('li')
             li.textContent = commentObject.content
             commentsUl.append(li)
         })
+
+        const imageLikes = document.querySelector('span.likes')
+        imageLikes.textContent = `${data.likes} likes`
+        
     renderImageCard
     }
 
